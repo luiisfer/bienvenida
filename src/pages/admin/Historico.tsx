@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { databases, appwriteConfig } from '@/lib/appwrite';
 import { Query } from 'appwrite';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Calendar, ChevronDown, ChevronUp, Users, Trophy } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 

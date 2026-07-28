@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { account } from '@/lib/appwrite';
-import { QrCode, User, Lock, ShieldAlert } from 'lucide-react';
+import { User, Lock, ShieldAlert } from 'lucide-react';
 
 export default function Login() {
   const [email, setEmail] = useState('');
