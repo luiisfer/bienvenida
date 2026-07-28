@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/store/useAuthStore';
-import { QrCode, LayoutDashboard, ListChecks, Users, Settings, LogOut, Menu, X } from 'lucide-react';
+import { QrCode, LayoutDashboard, ListChecks, Users, Settings, LogOut, Menu, X, History } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function AdminLayout() {
@@ -13,6 +13,7 @@ export default function AdminLayout() {
     { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
     { name: 'Generar QR', href: '/admin/qr', icon: QrCode },
     { name: 'Asistencias', href: '/admin/asistencias', icon: ListChecks },
+    { name: 'Histórico', href: '/admin/historico', icon: History },
     { name: 'Alumnos', href: '/admin/alumnos', icon: Users },
     { name: 'Configuración', href: '/admin/config', icon: Settings },
   ];
@@ -27,8 +28,8 @@ export default function AdminLayout() {
       <aside className="w-64 flex-col border-r bg-background hidden md:flex">
         <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
           <Link to="/" className="flex items-center gap-2 font-semibold">
-            <QrCode className="h-6 w-6" />
-            <span className="">Asistencia Pro</span>
+            <img src="/logoparroquia.jpg" className="h-7 w-7 rounded-full object-cover border" alt="Logo Parroquia" />
+            <span className="text-base font-bold tracking-tight">Asistencia</span>
           </Link>
         </div>
         <div className="flex-1 overflow-auto py-4">
@@ -81,8 +82,8 @@ export default function AdminLayout() {
             </div>
             <div className="flex items-center px-6 mb-6">
               <Link to="/" className="flex items-center gap-2 font-semibold" onClick={handleLinkClick}>
-                <QrCode className="h-6 w-6 text-primary" />
-                <span>Asistencia Pro</span>
+                <img src="/logoparroquia.jpg" className="h-7 w-7 rounded-full object-cover border" alt="Logo Parroquia" />
+                <span className="text-base font-bold tracking-tight">Asistencia</span>
               </Link>
             </div>
             <div className="flex-1 overflow-y-auto px-4">

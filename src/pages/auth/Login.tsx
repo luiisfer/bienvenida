@@ -31,13 +31,12 @@ export default function Login() {
       <div className="w-full max-w-[420px] rounded-[32px] bg-white p-12 shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-zinc-100/50 flex flex-col items-center">
         
         {/* Logo Card */}
-        <div className="flex items-center gap-1.5 bg-gradient-to-b from-[#f5f8fc] to-[#e9f0f8] border border-[#e2eaf4] rounded-2xl p-3 px-4 shadow-sm mb-6">
-          <QrCode className="h-5 w-5 text-[#0047cc]" />
-          <span className="text-xs font-bold text-[#0047cc] tracking-tight">AsisQR</span>
+        <div className="mb-6 flex justify-center">
+          <img src="/logoparroquia.jpg" className="h-20 w-20 rounded-full border-2 border-[#0047cc]/25 shadow-md object-cover animate-in fade-in zoom-in duration-300" alt="Logo Parroquia" />
         </div>
 
         {/* Title */}
-        <h1 className="text-3xl font-semibold text-[#0047cc] tracking-tight">AsisQR</h1>
+        <h1 className="text-3xl font-bold text-[#0047cc] tracking-tight">AsisQR</h1>
         
         {/* Subtitle */}
         <p className="text-xs text-zinc-500 text-center max-w-[240px] leading-relaxed mt-2 mb-8">

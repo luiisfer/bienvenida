@@ -10,6 +10,7 @@ import QRGenerator from '@/pages/admin/QRGenerator';
 import Asistencias from '@/pages/admin/Asistencias';
 import Alumnos from '@/pages/admin/Alumnos';
 import Config from '@/pages/admin/Config';
+import Historico from '@/pages/admin/Historico';
 import ScanQR from '@/pages/public/ScanQR';
 import ResetDevice from '@/pages/public/ResetDevice';
 
@@ -42,6 +43,7 @@ function App() {
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="qr" element={<QRGenerator />} />
           <Route path="asistencias" element={<Asistencias />} />
+          <Route path="historico" element={<Historico />} />
           <Route path="alumnos" element={<Alumnos />} />
           <Route path="config" element={<Config />} />
         </Route>
