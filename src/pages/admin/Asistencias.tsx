@@ -6,6 +6,15 @@ import { Input } from '@/components/ui/input';
 import { Search, Users, Trophy } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+const formatFecha = (fechaStr: string) => {
+  if (!fechaStr) return '';
+  const parts = fechaStr.split('-');
+  if (parts.length === 3) {
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  }
+  return fechaStr;
+};
+
 const TEAMS = [
   { name: 'Rojo', textClass: 'text-red-600 dark:text-red-400', bgClass: 'bg-red-50 dark:bg-red-950/20', borderClass: 'border-red-100 dark:border-red-900/30', badgeClass: 'bg-red-500 text-white' },
   { name: 'Azul', textClass: 'text-blue-600 dark:text-blue-400', bgClass: 'bg-blue-50 dark:bg-blue-950/20', borderClass: 'border-blue-100 dark:border-blue-900/30', badgeClass: 'bg-blue-500 text-white' },
@@ -116,6 +125,7 @@ export default function Asistencias() {
                       <thead className="bg-white/30 sticky top-0 border-b border-zinc-100">
                         <tr>
                           <th className="px-4 py-3 text-left font-semibold text-zinc-500 text-xs uppercase tracking-wider">Nombre</th>
+                          <th className="px-4 py-3 text-left font-semibold text-zinc-500 text-xs uppercase tracking-wider">Fecha</th>
                           <th className="px-4 py-3 text-left font-semibold text-zinc-500 text-xs uppercase tracking-wider">Hora</th>
                         </tr>
                       </thead>
@@ -133,6 +143,9 @@ export default function Asistencias() {
                                 {asistencia.nombre} {asistencia.apellido}
                               </td>
                               <td className="px-4 py-3 text-zinc-500 font-medium">
+                                {formatFecha(asistencia.fecha)}
+                              </td>
+                              <td className="px-4 py-3 text-zinc-500 font-medium">
                                 {asistencia.hora}
                               </td>
                             </motion.tr>
@@ -140,7 +153,7 @@ export default function Asistencias() {
                         </AnimatePresence>
                         {!loading && teamAsistencias.length === 0 && (
                           <tr>
-                            <td colSpan={2} className="px-4 py-8 text-center text-zinc-400 text-xs italic">
+                            <td colSpan={3} className="px-4 py-8 text-center text-zinc-400 text-xs italic">
                               Sin asistencias registradas
                             </td>
                           </tr>
