@@ -7,6 +7,15 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Maximize2, Minimize2 } from 'lucide-react';
 
+const formatFecha = (fechaStr: string) => {
+  if (!fechaStr) return '';
+  const parts = fechaStr.split('-');
+  if (parts.length !== 3) return fechaStr;
+  const date = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+  const formatted = date.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+};
+
 export default function QRGenerator() {
   const [activeQR, setActiveQR] = useState<any>(null);
   const [hasQRForToday, setHasQRForToday] = useState(false);
@@ -125,33 +134,27 @@ export default function QRGenerator() {
   if (isFullscreen && activeQR) {
     const scanUrl = `${window.location.origin}/scan/${activeQR.uuidQR}`;
     return (
-      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background text-foreground">
-        <div className="absolute top-6 right-6">
+      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background text-foreground p-4">
+        <div className="absolute top-4 right-4">
           <Button variant="outline" size="icon" onClick={toggleFullscreen} title="Salir de pantalla completa">
             <Minimize2 className="h-5 w-5" />
           </Button>
         </div>
         
-        <div className="text-center mb-10 space-y-2">
-          <h1 className="text-5xl font-bold tracking-tight">Registro de Asistencia</h1>
-          <p className="text-2xl text-muted-foreground">Escanea el código para registrarte hoy</p>
+        <div className="text-center mb-6 space-y-2 px-4">
+          <h1 className="text-3xl md:text-5xl font-bold tracking-tight">Registro de Asistencia</h1>
+          <p className="text-sm md:text-xl text-muted-foreground max-w-lg mx-auto">Escanea el código para registrarte hoy</p>
         </div>
 
-        <div className="flex flex-col items-center gap-4 bg-white p-8 rounded-3xl shadow-2xl">
-          <QRCodeSVG value={scanUrl} size={Math.min(window.innerWidth * 0.5, 600)} level="H" includeMargin />
-          <a
-            href={scanUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-lg text-primary hover:underline font-semibold tracking-tight text-center"
-          >
-            {scanUrl}
-          </a>
+        <div className="flex flex-col items-center gap-4 bg-white p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-[90%] sm:max-w-[400px]">
+          <div className="w-full flex items-center justify-center bg-white">
+            <QRCodeSVG value={scanUrl} style={{ width: '100%', height: 'auto', maxWidth: '300px' }} level="H" includeMargin />
+          </div>
         </div>
 
-        <div className="mt-8 text-center space-y-1">
-          <p className="text-3xl font-medium">{activeQR.fecha}</p>
-          <p className="text-xl text-muted-foreground">Generado a las {activeQR.hora}</p>
+        <div className="mt-6 text-center space-y-1">
+          <p className="text-xl md:text-3xl font-medium">{formatFecha(activeQR.fecha)}</p>
+          <p className="text-sm md:text-lg text-muted-foreground">Generado a las {activeQR.hora}</p>
         </div>
       </div>
     );
@@ -205,7 +208,7 @@ export default function QRGenerator() {
                     QR {activeQR.activo ? 'Activo' : 'Inactivo'} para hoy
                   </p>
                 </div>
-                <p className="text-sm text-muted-foreground">{activeQR.fecha} - {activeQR.hora}</p>
+                <p className="text-sm text-muted-foreground">{formatFecha(activeQR.fecha)} - {activeQR.hora}</p>
                 <Button 
                   variant={activeQR.activo ? "destructive" : "default"} 
                   size="sm" 
