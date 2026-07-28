@@ -99,6 +99,29 @@ export default function QRGenerator() {
     setIsFullscreen(!isFullscreen);
   };
 
+  const toggleActiveStatus = async () => {
+    if (!activeQR) return;
+    setIsLoading(true);
+    setErrorMsg('');
+    try {
+      const newStatus = !activeQR.activo;
+      const updated = await databases.updateDocument(
+        appwriteConfig.databaseId,
+        appwriteConfig.collections.qrDias,
+        activeQR.$id,
+        {
+          activo: newStatus
+        }
+      );
+      setActiveQR(updated);
+    } catch (error) {
+      console.error('Error updating QR status:', error);
+      setErrorMsg('Error al actualizar el estado del QR.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   if (isFullscreen && activeQR) {
     const scanUrl = `${window.location.origin}/scan/${activeQR.uuidQR}`;
     return (
@@ -157,21 +180,40 @@ export default function QRGenerator() {
           ) : activeQR ? (
             <div className="text-center space-y-6 flex flex-col items-center">
               <div className="flex flex-col items-center gap-3">
-                <div className="bg-white p-4 rounded-xl shadow-sm inline-block border">
+                <div className={`bg-white p-4 rounded-xl shadow-sm inline-block border ${!activeQR.activo ? 'opacity-40 grayscale' : ''}`}>
                   <QRCodeSVG value={scanUrl} size={200} level="H" />
                 </div>
-                <a
-                  href={scanUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs text-[#0047cc] hover:underline font-semibold break-all max-w-[280px]"
-                >
-                  {scanUrl}
-                </a>
+                {activeQR.activo ? (
+                  <a
+                    href={scanUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-[#0047cc] hover:underline font-semibold break-all max-w-[280px]"
+                  >
+                    {scanUrl}
+                  </a>
+                ) : (
+                  <span className="text-xs text-muted-foreground line-through break-all max-w-[280px]">
+                    {scanUrl}
+                  </span>
+                )}
               </div>
-              <div>
-                <p className="font-semibold text-lg">QR Activo para hoy</p>
+              <div className="space-y-3">
+                <div className="flex items-center justify-center gap-2">
+                  <span className={`h-2.5 w-2.5 rounded-full ${activeQR.activo ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`} />
+                  <p className="font-semibold text-lg">
+                    QR {activeQR.activo ? 'Activo' : 'Inactivo'} para hoy
+                  </p>
+                </div>
                 <p className="text-sm text-muted-foreground">{activeQR.fecha} - {activeQR.hora}</p>
+                <Button 
+                  variant={activeQR.activo ? "destructive" : "default"} 
+                  size="sm" 
+                  onClick={toggleActiveStatus}
+                  disabled={isLoading}
+                >
+                  {activeQR.activo ? 'Desactivar QR' : 'Activar QR'}
+                </Button>
               </div>
             </div>
           ) : (
@@ -190,7 +232,7 @@ export default function QRGenerator() {
               Límite diario alcanzado (1 QR por día)
             </div>
           )}
-          {activeQR && (
+          {activeQR && activeQR.activo && (
             <Button onClick={toggleFullscreen} className="gap-2">
               <Maximize2 className="h-4 w-4" />
               Pantalla Completa
