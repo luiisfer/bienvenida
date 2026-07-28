@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { databases, realtime, appwriteConfig } from '@/lib/appwrite';
 import { Query } from 'appwrite';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
+import { Search, Users, Trophy } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const formatFecha = (fechaStr: string) => {
@@ -14,6 +14,14 @@ const formatFecha = (fechaStr: string) => {
   }
   return fechaStr;
 };
+
+const TEAMS = [
+  { name: 'Rojo', textClass: 'text-red-600 dark:text-red-400', bgClass: 'bg-red-50 dark:bg-red-950/20', borderClass: 'border-red-100 dark:border-red-900/30', badgeClass: 'bg-red-500 text-white' },
+  { name: 'Azul', textClass: 'text-blue-600 dark:text-blue-400', bgClass: 'bg-blue-50 dark:bg-blue-950/20', borderClass: 'border-blue-100 dark:border-blue-900/30', badgeClass: 'bg-blue-500 text-white' },
+  { name: 'Verde', textClass: 'text-green-600 dark:text-green-400', bgClass: 'bg-green-50 dark:bg-green-950/20', borderClass: 'border-green-100 dark:border-green-900/30', badgeClass: 'bg-green-500 text-white' },
+  { name: 'Amarillo', textClass: 'text-yellow-600 dark:text-yellow-400', bgClass: 'bg-yellow-50 dark:bg-yellow-950/20', borderClass: 'border-yellow-100 dark:border-yellow-900/30', badgeClass: 'bg-yellow-500 text-neutral-900' },
+  { name: 'Naranja', textClass: 'text-orange-600 dark:text-orange-400', bgClass: 'bg-orange-50 dark:bg-orange-950/20', borderClass: 'border-orange-100 dark:border-orange-900/30', badgeClass: 'bg-orange-500 text-white' }
+];
 
 export default function Asistencias() {
   const [asistencias, setAsistencias] = useState<any[]>([]);
@@ -46,7 +54,6 @@ export default function Asistencias() {
     // Subscribe to realtime updates
     const channel = `databases.${appwriteConfig.databaseId}.collections.${appwriteConfig.collections.asistencias}.documents`;
     const unsubscribe = realtime.subscribe(channel, (response) => {
-      // Check if it's a create event
       if (response.events.includes('databases.*.collections.*.documents.*.create')) {
         const newDoc: any = response.payload;
         const today = new Date().toISOString().split('T')[0];
@@ -61,100 +68,101 @@ export default function Asistencias() {
     };
   }, []);
 
-  const filteredAsistencias = asistencias.filter(a => 
-    `${a.nombre} ${a.apellido}`.toLowerCase().includes(search.toLowerCase()) ||
-    a.color.toLowerCase().includes(search.toLowerCase())
-  );
+  const getFilteredAsistenciasByColor = (colorName: string) => {
+    return asistencias.filter(a => 
+      a.color === colorName &&
+      (`${a.nombre} ${a.apellido}`.toLowerCase().includes(search.toLowerCase()))
+    );
+  };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold tracking-tight">Asistencias de Hoy</h2>
-        <p className="text-muted-foreground">Registro en tiempo real de los alumnos que han escaneado el QR.</p>
-      </div>
-
-      <div className="flex items-center gap-4">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Buscar por nombre o color..."
-            className="pl-8"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+    <div className="space-y-6 pb-12">
+      <div className="flex flex-col gap-2 md:flex-row md:justify-between md:items-center">
+        <div>
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Asistencias de Hoy</h2>
+          <p className="text-muted-foreground text-sm md:text-base">
+            Registro en tiempo real por cada color.
+          </p>
         </div>
-        <div className="bg-primary/10 text-primary px-4 py-2 rounded-full font-medium text-sm border border-primary/20">
-          Total: {asistencias.length}
+        <div className="flex items-center gap-3 bg-primary/10 text-primary px-4 py-2 rounded-2xl font-bold text-sm border border-primary/20 self-start md:self-auto">
+          <Users className="w-4 h-4" />
+          <span>Total General: {asistencias.length}</span>
         </div>
       </div>
 
-      <Card>
-        <CardContent className="p-0">
-          <div className="relative w-full overflow-auto">
-            <table className="w-full caption-bottom text-sm">
-              <thead className="[&_tr]:border-b">
-                <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Alumno</th>
-                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Color</th>
-                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Fecha</th>
-                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Hora</th>
-                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">UUID</th>
-                </tr>
-              </thead>
-              <tbody>
-                <AnimatePresence>
-                  {filteredAsistencias.map((asistencia) => (
-                    <motion.tr 
-                      key={asistencia.$id}
-                      initial={{ opacity: 0, y: -10, backgroundColor: 'rgba(59, 130, 246, 0.2)' }}
-                      animate={{ opacity: 1, y: 0, backgroundColor: 'transparent' }}
-                      transition={{ duration: 0.5 }}
-                      className="border-b transition-colors hover:bg-muted/50"
-                    >
-                      <td className="p-4 align-middle font-medium">
-                        {asistencia.nombre} {asistencia.apellido}
-                      </td>
-                      <td className="p-4 align-middle">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold
-                          ${asistencia.color === 'Rojo' ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' : ''}
-                          ${asistencia.color === 'Azul' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400' : ''}
-                          ${asistencia.color === 'Verde' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : ''}
-                          ${asistencia.color === 'Amarillo' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400' : ''}
-                          ${asistencia.color === 'Naranja' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400' : ''}
-                        `}>
-                          {asistencia.color}
-                        </span>
-                      </td>
-                      <td className="p-4 align-middle text-muted-foreground">{formatFecha(asistencia.fecha)}</td>
-                      <td className="p-4 align-middle text-muted-foreground">{asistencia.hora}</td>
-                      <td className="p-4 align-middle text-muted-foreground font-mono text-xs truncate max-w-[150px]" title={asistencia.uuidAlumno}>
-                        {asistencia.uuidAlumno.split('-')[0]}...
-                      </td>
-                    </motion.tr>
-                  ))}
-                </AnimatePresence>
-                {!loading && filteredAsistencias.length === 0 && (
-                  <tr>
-                    <td colSpan={5} className="p-8 text-center text-muted-foreground">
-                      No hay asistencias registradas aún.
-                    </td>
-                  </tr>
-                )}
-                {loading && (
-                  <tr>
-                    <td colSpan={5} className="p-8 text-center">
-                      <div className="flex justify-center">
-                        <div className="animate-spin rounded-full h-6 w-6 border-2 border-primary border-r-transparent"></div>
-                      </div>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="relative max-w-md w-full">
+        <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+        <Input
+          type="search"
+          placeholder="Buscar por nombre..."
+          className="pl-9 py-5 rounded-xl shadow-sm"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </div>
+
+      {/* Grid de Tablas por Color */}
+      <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
+        {TEAMS.map((team) => {
+          const teamAsistencias = getFilteredAsistenciasByColor(team.name);
+          return (
+            <Card key={team.name} className={`shadow-md border ${team.borderClass} ${team.bgClass} flex flex-col justify-between overflow-hidden`}>
+              <div>
+                <CardHeader className="flex flex-row items-center justify-between pb-3 border-b border-zinc-100/50 bg-white/50 backdrop-blur-md">
+                  <div className="flex items-center gap-2">
+                    <Trophy className={`w-5 h-5 ${team.textClass}`} />
+                    <CardTitle className={`text-lg font-bold ${team.textClass}`}>
+                      Equipo {team.name}
+                    </CardTitle>
+                  </div>
+                  <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${team.badgeClass} shadow-sm`}>
+                    Asistencias: {teamAsistencias.length}
+                  </span>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <div className="w-full overflow-auto max-h-[300px]">
+                    <table className="w-full text-sm">
+                      <thead className="bg-white/30 sticky top-0 border-b border-zinc-100">
+                        <tr>
+                          <th className="px-4 py-3 text-left font-semibold text-zinc-500 text-xs uppercase tracking-wider">Nombre</th>
+                          <th className="px-4 py-3 text-left font-semibold text-zinc-500 text-xs uppercase tracking-wider">Hora</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-zinc-100/50">
+                        <AnimatePresence>
+                          {teamAsistencias.map((asistencia) => (
+                            <motion.tr
+                              key={asistencia.$id}
+                              initial={{ opacity: 0, y: -5 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.3 }}
+                              className="hover:bg-white/40 transition-colors"
+                            >
+                              <td className="px-4 py-3 font-semibold text-zinc-800">
+                                {asistencia.nombre} {asistencia.apellido}
+                              </td>
+                              <td className="px-4 py-3 text-zinc-500 font-medium">
+                                {asistencia.hora}
+                              </td>
+                            </motion.tr>
+                          ))}
+                        </AnimatePresence>
+                        {!loading && teamAsistencias.length === 0 && (
+                          <tr>
+                            <td colSpan={2} className="px-4 py-8 text-center text-zinc-400 text-xs italic">
+                              Sin asistencias registradas
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </CardContent>
+              </div>
+            </Card>
+          );
+        })}
+      </div>
     </div>
   );
 }
