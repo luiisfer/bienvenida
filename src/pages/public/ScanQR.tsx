@@ -114,7 +114,7 @@ export default function ScanQR() {
           apellido: alumno.apellido,
           color: alumno.color,
           fecha: now.toISOString().split('T')[0],
-          hora: now.toLocaleTimeString(),
+          hora: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }),
           timestamp: now.toISOString()
         }
       );
@@ -220,7 +220,7 @@ export default function ScanQR() {
             </div>
             <h1 className="text-2xl font-bold text-gray-900">¡Asistencia Registrada!</h1>
             <p className="text-gray-500">
-              Tu asistencia de hoy ha sido guardada correctamente a las {new Date().toLocaleTimeString()}.
+              Tu asistencia de hoy ha sido guardada correctamente a las {new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true })}.
             </p>
             {localStorage.getItem('alumno_data') && (() => {
               const alumno = JSON.parse(localStorage.getItem('alumno_data')!);
