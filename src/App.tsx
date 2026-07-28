@@ -11,6 +11,7 @@ import Asistencias from '@/pages/admin/Asistencias';
 import Alumnos from '@/pages/admin/Alumnos';
 import Config from '@/pages/admin/Config';
 import ScanQR from '@/pages/public/ScanQR';
+import ResetDevice from '@/pages/public/ResetDevice';
 
 function App() {
   const { checkAuth, loading, user } = useAuthStore();
@@ -33,6 +34,7 @@ function App() {
         {/* Rutas Públicas */}
         <Route path="/login" element={user ? <Navigate to="/admin/dashboard" /> : <Login />} />
         <Route path="/scan/:uuidQR" element={<ScanQR />} />
+        <Route path="/reset" element={<ResetDevice />} />
         
         {/* Rutas Protegidas de Administrador */}
         <Route path="/admin" element={user ? <AdminLayout /> : <Navigate to="/login" />}>

@@ -232,7 +232,7 @@ export default function ScanQR() {
                   ${alumno.color === 'Amarillo' ? 'bg-yellow-50/20 border-yellow-100' : ''}
                   ${alumno.color === 'Naranja' ? 'bg-orange-50/50 border-orange-100' : ''}
                 `}>
-                  <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider">Alumno Registrado</span>
+                  <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider">Registrado Correctamente</span>
                   
                   <h3 className={`text-xl font-bold tracking-tight
                     ${alumno.color === 'Rojo' ? 'text-red-950' : ''}
@@ -285,7 +285,7 @@ export default function ScanQR() {
                   ${alumno.color === 'Amarillo' ? 'bg-yellow-50/20 border-yellow-100' : ''}
                   ${alumno.color === 'Naranja' ? 'bg-orange-50/50 border-orange-100' : ''}
                 `}>
-                  <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider">Detalles del Alumno</span>
+                  <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider">Detalles del Registro</span>
                   
                   <h3 className={`text-xl font-bold tracking-tight
                     ${alumno.color === 'Rojo' ? 'text-red-950' : ''}
