@@ -6,15 +6,6 @@ import { Input } from '@/components/ui/input';
 import { Search, Users, Trophy } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const formatFecha = (fechaStr: string) => {
-  if (!fechaStr) return '';
-  const parts = fechaStr.split('-');
-  if (parts.length === 3) {
-    return `${parts[2]}/${parts[1]}/${parts[0]}`;
-  }
-  return fechaStr;
-};
-
 const TEAMS = [
   { name: 'Rojo', textClass: 'text-red-600 dark:text-red-400', bgClass: 'bg-red-50 dark:bg-red-950/20', borderClass: 'border-red-100 dark:border-red-900/30', badgeClass: 'bg-red-500 text-white' },
   { name: 'Azul', textClass: 'text-blue-600 dark:text-blue-400', bgClass: 'bg-blue-50 dark:bg-blue-950/20', borderClass: 'border-blue-100 dark:border-blue-900/30', badgeClass: 'bg-blue-500 text-white' },
