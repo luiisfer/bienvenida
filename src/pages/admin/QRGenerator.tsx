@@ -6,6 +6,7 @@ import { ID, Query } from 'appwrite';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Maximize2, Minimize2 } from 'lucide-react';
+import { getLocalDateString } from '@/lib/utils';
 
 const formatFecha = (fechaStr: string) => {
   if (!fechaStr) return '';
@@ -27,7 +28,7 @@ export default function QRGenerator() {
     setIsLoading(true);
     setErrorMsg('');
     try {
-      const today = new Date().toISOString().split('T')[0];
+      const today = getLocalDateString();
       const response = await databases.listDocuments(
         appwriteConfig.databaseId,
         appwriteConfig.collections.qrDias,
@@ -60,7 +61,7 @@ export default function QRGenerator() {
     setIsLoading(true);
     setErrorMsg('');
     try {
-      const today = new Date().toISOString().split('T')[0];
+      const today = getLocalDateString();
       
       // Doble verificación: listar si ya existe algún documento para hoy
       const existing = await databases.listDocuments(

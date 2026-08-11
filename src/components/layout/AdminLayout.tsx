@@ -8,6 +8,7 @@ export default function AdminLayout() {
   const { logout, user } = useAuthStore();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   const navigation = [
     { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
@@ -25,15 +26,15 @@ export default function AdminLayout() {
   return (
     <div className="flex h-screen w-full bg-muted/40 overflow-hidden">
       {/* Desktop Sidebar */}
-      <aside className="w-64 flex-col border-r bg-background hidden md:flex">
-        <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
+      <aside className={`flex-col border-r bg-background hidden md:flex transition-all duration-300 ${isSidebarCollapsed ? 'w-16' : 'w-64'}`}>
+        <div className={`flex h-14 items-center border-b px-4 lg:h-[60px] ${isSidebarCollapsed ? 'justify-center px-2' : 'lg:px-6'}`}>
           <Link to="/" className="flex items-center gap-2 font-semibold">
             <img src="/logoparroquia.jpg" className="h-7 w-7 rounded-full object-cover border" alt="Logo Parroquia" />
-            <span className="text-base font-bold tracking-tight">Asistencia</span>
+            {!isSidebarCollapsed && <span className="text-base font-bold tracking-tight">Asistencia</span>}
           </Link>
         </div>
         <div className="flex-1 overflow-auto py-4">
-          <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
+          <nav className={`grid items-start px-2 text-sm font-medium ${isSidebarCollapsed ? 'justify-center gap-2' : 'lg:px-4'}`}>
             {navigation.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname.startsWith(item.href);
@@ -42,11 +43,14 @@ export default function AdminLayout() {
                   key={item.name}
                   to={item.href}
                   className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary ${
+                    isSidebarCollapsed ? 'justify-center px-0 w-10 h-10' : ''
+                  } ${
                     isActive ? 'bg-muted text-primary' : 'text-muted-foreground'
                   }`}
+                  title={isSidebarCollapsed ? item.name : undefined}
                 >
                   <Icon className="h-4 w-4" />
-                  {item.name}
+                  {!isSidebarCollapsed && <span>{item.name}</span>}
                 </Link>
               );
             })}
@@ -54,12 +58,19 @@ export default function AdminLayout() {
         </div>
         <div className="mt-auto p-4 border-t">
           <div className="flex flex-col gap-2">
-            <p className="text-xs text-muted-foreground px-2 truncate">
-              {user?.email}
-            </p>
-            <Button variant="outline" className="w-full justify-start gap-2" onClick={logout}>
+            {!isSidebarCollapsed && (
+              <p className="text-xs text-muted-foreground px-2 truncate">
+                {user?.email}
+              </p>
+            )}
+            <Button 
+              variant="outline" 
+              className={`w-full gap-2 transition-all duration-300 ${isSidebarCollapsed ? 'justify-center px-0' : 'justify-start'}`} 
+              onClick={logout}
+              title={isSidebarCollapsed ? "Cerrar sesión" : undefined}
+            >
               <LogOut className="h-4 w-4" />
-              Cerrar sesión
+              {!isSidebarCollapsed && <span>Cerrar sesión</span>}
             </Button>
           </div>
         </div>
@@ -130,6 +141,15 @@ export default function AdminLayout() {
             size="icon" 
             className="md:hidden" 
             onClick={() => setIsMobileMenuOpen(true)}
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
+          <Button 
+            variant="outline" 
+            size="icon" 
+            className="hidden md:flex" 
+            onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+            title={isSidebarCollapsed ? "Expandir menú" : "Colapsar menú"}
           >
             <Menu className="h-5 w-5" />
           </Button>

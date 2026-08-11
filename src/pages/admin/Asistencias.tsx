@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Search, Users, Trophy } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { getLocalDateString } from '@/lib/utils';
 
 const formatFecha = (fechaStr: string) => {
   if (!fechaStr) return '';
@@ -30,7 +31,7 @@ export default function Asistencias() {
 
   const fetchAsistencias = async () => {
     try {
-      const today = new Date().toISOString().split('T')[0];
+      const today = getLocalDateString();
       const response = await databases.listDocuments(
         appwriteConfig.databaseId,
         appwriteConfig.collections.asistencias,
@@ -56,7 +57,7 @@ export default function Asistencias() {
     const unsubscribe = realtime.subscribe(channel, (response) => {
       if (response.events.includes('databases.*.collections.*.documents.*.create')) {
         const newDoc: any = response.payload;
-        const today = new Date().toISOString().split('T')[0];
+        const today = getLocalDateString();
         if (newDoc.fecha === today) {
           setAsistencias((prev) => [newDoc, ...prev]);
         }

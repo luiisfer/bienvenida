@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { CheckCircle2, XCircle, AlertCircle, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { getLocalDateString } from '@/lib/utils';
 
 type Estado = 'verificando' | 'formulario' | 'registrando' | 'exito' | 'duplicado' | 'error';
 
@@ -28,7 +29,7 @@ export default function ScanQR() {
   const verificarQR = async () => {
     try {
       // 1. Verificar si el QR existe y está activo
-      const today = new Date().toISOString().split('T')[0];
+      const today = getLocalDateString();
       const qrRes = await databases.listDocuments(
         appwriteConfig.databaseId,
         appwriteConfig.collections.qrDias,
@@ -113,7 +114,7 @@ export default function ScanQR() {
           nombre: alumno.nombre,
           apellido: alumno.apellido,
           color: alumno.color,
-          fecha: now.toISOString().split('T')[0],
+          fecha: getLocalDateString(now),
           hora: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }),
           timestamp: now.toISOString()
         }

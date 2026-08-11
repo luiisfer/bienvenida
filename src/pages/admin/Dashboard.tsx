@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users, QrCode, UserCheck, Palette } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { Query } from 'appwrite';
+import { getLocalDateString } from '@/lib/utils';
 
 export default function Dashboard() {
   const [stats, setStats] = useState({
@@ -17,7 +18,7 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const today = new Date().toISOString().split('T')[0];
+        const today = getLocalDateString();
 
         // Fetch total alumnos
         const alumnosRes = await databases.listDocuments(
