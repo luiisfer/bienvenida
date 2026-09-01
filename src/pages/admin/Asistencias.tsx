@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Search, Users, Trophy } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getLocalDateString } from '@/lib/utils';
+import { getLocalDateString, getAttendanceTime } from '@/lib/utils';
 
 const formatFecha = (fechaStr: string) => {
   if (!fechaStr) return '';
@@ -37,8 +37,8 @@ export default function Asistencias() {
         appwriteConfig.collections.asistencias,
         [
           Query.equal('fecha', today),
-          Query.orderDesc('timestamp'),
-          Query.limit(100)
+          Query.orderAsc('timestamp'),
+          Query.limit(500)
         ]
       );
       setAsistencias(response.documents);
@@ -59,7 +59,10 @@ export default function Asistencias() {
         const newDoc: any = response.payload;
         const today = getLocalDateString();
         if (newDoc.fecha === today) {
-          setAsistencias((prev) => [newDoc, ...prev]);
+          setAsistencias((prev) => {
+            if (prev.some(doc => doc.$id === newDoc.$id)) return prev;
+            return [...prev, newDoc];
+          });
         }
       }
     });
@@ -70,10 +73,12 @@ export default function Asistencias() {
   }, []);
 
   const getFilteredAsistenciasByColor = (colorName: string) => {
-    return asistencias.filter(a => 
-      a.color === colorName &&
-      (`${a.nombre} ${a.apellido}`.toLowerCase().includes(search.toLowerCase()))
-    );
+    return asistencias
+      .filter(a => 
+        a.color === colorName &&
+        (`${a.nombre} ${a.apellido}`.toLowerCase().includes(search.toLowerCase()))
+      )
+      .sort((a, b) => getAttendanceTime(a) - getAttendanceTime(b));
   };
 
   return (

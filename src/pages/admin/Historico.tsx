@@ -4,6 +4,7 @@ import { Query } from 'appwrite';
 import { Card } from '@/components/ui/card';
 import { Calendar, ChevronDown, ChevronUp, Users, Trophy } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { getAttendanceTime } from '@/lib/utils';
 
 const formatFechaLarga = (fechaStr: string) => {
   if (!fechaStr) return '';
@@ -42,7 +43,7 @@ export default function Historico() {
         appwriteConfig.collections.asistencias,
         [
           Query.limit(5000),
-          Query.orderDesc('timestamp')
+          Query.orderAsc('timestamp')
         ]
       );
 
@@ -64,6 +65,11 @@ export default function Historico() {
         acc[date].alumnos.push(curr);
         return acc;
       }, {});
+
+      // Ordenar los alumnos de cada día por hora de registro ascendente
+      Object.values(grouped).forEach(dia => {
+        dia.alumnos.sort((a, b) => getAttendanceTime(a) - getAttendanceTime(b));
+      });
 
       // Convertir a lista y ordenar por fecha descendente
       const sorted = Object.values(grouped).sort((a, b) => b.fecha.localeCompare(a.fecha));
